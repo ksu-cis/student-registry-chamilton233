@@ -10,14 +10,16 @@ namespace StudentRegister
     /// <summary>
     /// A class representing a student
     /// </summary>
-    public class Student
+    public class Student : INotifyPropertyChanged
     {
         private List<CourseResult> courseHistory;
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Gets and sets the first name
         /// </summary>
-        public string First { get; set; }
+        private string first { get; set; }
 
         /// <summary>
         /// Gets and sets the last name
@@ -84,6 +86,27 @@ namespace StudentRegister
             First = first;
             Last = last;
             courseHistory = new List<CourseResult>();
+        }
+
+        public override string ToString()
+        {
+            return $"{Last}, {First} ({GPA})";
+        }
+
+        private void NotifyPropertyChanged(string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        public void CourseComplete(string name, uint hours, Grade grade, string semsester)
+        {
+            this.courseHistory.Add(new CourseResult(name, hours, grade, semsester));
+            NotifyPropertyChanged("GPA");
+        }
+        private string First {
+            get { return first; }
+            set { first = value;
+                NotifyPropertyChanged("First");
+            }
         }
 
     }
